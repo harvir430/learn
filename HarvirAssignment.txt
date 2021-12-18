@@ -1,0 +1,104 @@
+package practice_project;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.PageLoadStrategy;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+//import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class Practice {
+
+	public static WebDriver driver;
+	public static ChromeOptions options=new ChromeOptions();
+	public static WebDriverWait wait;
+	public static Select select;
+	public static SoftAssert softassert= new SoftAssert();
+	
+	@BeforeTest
+	public void initialize() {
+		WebDriverManager.chromedriver().setup();
+		options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+		options.addArguments("--start-maximized");
+		options.addArguments("--incognito");
+		driver= new ChromeDriver(options);
+		driver.get("http://automationpractice.com/index.php");
+	}
+	@Test(priority=0)
+	public void clickonSignInLink() {
+		softassert.assertEquals(driver.getCurrentUrl(),"http://automationpractice.com/index.php","Url is not correct!!");
+
+		wait= new WebDriverWait(driver,20);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@class='login']")));
+		WebElement signIn=driver.findElement(By.xpath("//a[@class='login']"));
+		
+		
+		signIn.click();
+	}
+	@Test(priority=1)
+	public void CreateAccount() throws InterruptedException {
+		
+		driver.findElement(By.id("email_create")).sendKeys("harry@gmail");
+		driver.findElement(By.id("SubmitCreate")).click();
+		Thread.sleep(4000);
+		WebElement ErrorMsg=driver.findElement(By.id("create_account_error"));
+		
+		
+		Thread.sleep(2000);
+		if(ErrorMsg.isDisplayed()){
+		driver.findElement(By.id("email_create")).clear();
+		}
+		else {
+			System.out.println("Email entered is correct");
+		}
+		softassert.assertTrue(ErrorMsg.isDisplayed());
+		softassert.assertAll();
+		
+	
+	}
+	@Test(priority=2)
+	public void CreateAccount2() {
+		driver.findElement(By.id("email_create")).sendKeys("harry1@gmail.com");
+		driver.findElement(By.id("SubmitCreate")).click();
+		
+	}
+	@Test(priority=3)
+	public void SignUpForm() {
+		wait=new WebDriverWait(driver,20);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("id_gender1")));
+		driver.findElement(By.id("id_gender1")).click();
+		driver.findElement(By.id("customer_firstname")).sendKeys("harvir");
+		driver.findElement(By.id("customer_lastname")).sendKeys("singh");
+		driver.findElement(By.id("passwd")).sendKeys("123456");
+		select=new Select(driver.findElement(By.id("days")));
+		select.selectByValue("1");
+		select= new Select(driver.findElement(By.id("months")));
+		select.selectByVisibleText("January ");
+		select= new Select(driver.findElement(By.id("years")));
+		select.selectByVisibleText("2000  ");
+		
+		driver.findElement(By.id("firstname")).sendKeys("harvir");
+		driver.findElement(By.id("lastname")).sendKeys("singh");
+		driver.findElement(By.id("company")).sendKeys("rogers");
+		driver.findElement(By.id("address1")).sendKeys("111 CANADA STREET");
+		driver.findElement(By.id("city")).sendKeys("TORONTO");
+		
+		select = new Select(driver.findElement(By.id("id_state")));
+		select.selectByVisibleText("Hawaii");
+		
+		driver.findElement(By.id("postcode")).sendKeys("L1X2E3");
+		driver.findElement(By.id("phone_mobile")).sendKeys("1234567890");
+		
+
+	}
+
+}
